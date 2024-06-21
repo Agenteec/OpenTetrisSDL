@@ -24,7 +24,7 @@ find_package(imgui CONFIG REQUIRED)
 
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
-#find_package(SDL2_mixer CONFIG REQUIRED)
+find_package(SDL2_mixer CONFIG REQUIRED)
 find_package(SDL2_net CONFIG REQUIRED)
 find_package(SDL2_ttf CONFIG REQUIRED)
 find_package(SDL2-gfx CONFIG REQUIRED)
@@ -45,13 +45,12 @@ target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE pugixml::shared pugixml::pug
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE box2d::box2d)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE JsonCpp::JsonCpp)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE spdlog::spdlog_header_only)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE unofficial::lunasvg::lunasvg)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2_image::SDL2_image)
-#target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2_mixer::SDL2_mixer)
+target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2_mixer::SDL2_mixer)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2_ttf::SDL2_ttf)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2_net::SDL2_net)
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE SDL2::SDL2_gfx)
