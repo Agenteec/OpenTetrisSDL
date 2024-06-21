@@ -26,5 +26,7 @@ private:
     boost::asio::ip::udp::socket udp_socket_;
     boost::asio::ip::udp::endpoint udp_endpoint_;
     std::thread network_thread_;
+    std::string tcp_buffer_;
+    std::string udp_buffer_;
     bool running_;
 };

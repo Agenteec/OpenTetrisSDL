@@ -6,8 +6,16 @@ GameObject::GameObject(b2World* world) {
     body_ = world->CreateBody(&bodyDef);
 }
 
+GameObject::GameObject():body_(nullptr)
+{
+}
+
 GameObject::~GameObject() {
-    body_->GetWorld()->DestroyBody(body_);
+    if (body_ != nullptr)
+    {
+        body_->GetWorld()->DestroyBody(body_);
+    }
+    
 }
 
 void GameObject::updateFromPhysics() {

@@ -1,5 +1,6 @@
 #pragma once
-#include <vector>
+
+#include <unordered_map>
 #include <memory>
 #include "GameObjects/GameObject.h"
 
@@ -9,10 +10,13 @@ public:
     ~GameState();
 
     void addObject(std::shared_ptr<GameObject> object);
-    void removeObject(std::shared_ptr<GameObject> object);
-    std::vector<std::shared_ptr<GameObject>> getObjects() const;
+    void removeObject(int id);
+    std::shared_ptr<GameObject> getObject(int id);
+    const std::unordered_map<int, std::shared_ptr<GameObject>>& getObjects() const;
+
     void update();
 
 private:
-    std::vector<std::shared_ptr<GameObject>> objects_;
+    std::unordered_map<int, std::shared_ptr<GameObject>> objects_;
+    int nextId_;
 };

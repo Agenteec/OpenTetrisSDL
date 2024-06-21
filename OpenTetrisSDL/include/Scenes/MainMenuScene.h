@@ -1,13 +1,12 @@
 #pragma once
 
-#include "Scenes/Scene.h"
-#include "Scenes/NetworkGameScene.h"
-#include "Scenes/SinglePlayerGameScene.h"
+#include "Scene.h"
 #include "Window.h"
 #include "InputHandler.h"
 #include "Renderer.h"
-#include "Game.h"
 #include <memory>
+
+class Game;
 
 class MainMenuScene : public Scene {
 public:
@@ -16,6 +15,7 @@ public:
     void update() override;
     void render() override;
     void handleEvents() override;
+
 private:
     void onCreateServer();
     void onJoinServer();
@@ -25,4 +25,3 @@ private:
     InputHandler* inputHandler_;
     Game* game_;
 };
-

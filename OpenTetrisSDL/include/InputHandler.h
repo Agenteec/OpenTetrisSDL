@@ -16,4 +16,3 @@ private:
     std::unordered_map<SDL_Keycode, bool> keyStates_;
     std::unordered_map<Uint8, bool> mouseButtonStates_;
 };
-

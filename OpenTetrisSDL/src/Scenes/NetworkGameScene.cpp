@@ -1,5 +1,5 @@
 #include "Scenes/NetworkGameScene.h"
-
+#include "Game.h"
 
 NetworkGameScene::NetworkGameScene(Window* window, Renderer* renderer, InputHandler* inputHandler, NetworkManager* networkManager, PhysicsEngine* physicsEngine)
     : window_(window), renderer_(renderer), inputHandler_(inputHandler), networkManager_(networkManager), physicsEngine_(physicsEngine) {}

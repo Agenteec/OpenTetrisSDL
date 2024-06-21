@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Scene.h"
+#include "Scenes/Scene.h"
 #include "Network/NetworkManager.h"
 #include "Window.h"
 #include "Renderer.h"
 #include "InputHandler.h"
 #include "PhysicsEngine.h"
 
-
+class Game;
 class NetworkGameScene : public Scene {
 public:
     NetworkGameScene(Window* window, Renderer* renderer, InputHandler* inputHandler, NetworkManager* networkManager, PhysicsEngine* physicsEngine);

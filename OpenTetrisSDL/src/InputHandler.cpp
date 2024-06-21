@@ -1,9 +1,6 @@
 #include "InputHandler.h"
 
-InputHandler::InputHandler() {
-    SDL_memset(keyStates_, 0, sizeof(keyStates_));
-    SDL_memset(mouseButtonStates_, 0, sizeof(mouseButtonStates_));
-}
+InputHandler::InputHandler() {}
 
 InputHandler::~InputHandler() {}
 
@@ -30,13 +27,16 @@ void InputHandler::update() {
 }
 
 bool InputHandler::isKeyPressed(SDL_Keycode key) {
-    return keyStates_[key];
+    auto it = keyStates_.find(key);
+    return it != keyStates_.end() && it->second;
 }
 
 bool InputHandler::isKeyReleased(SDL_Keycode key) {
-    return !keyStates_[key];
+    auto it = keyStates_.find(key);
+    return it == keyStates_.end() || !it->second;
 }
 
 bool InputHandler::isMouseButtonPressed(Uint8 button) {
-    return mouseButtonStates_[button];
+    auto it = mouseButtonStates_.find(button);
+    return it != mouseButtonStates_.end() && it->second;
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include "Window.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -9,7 +7,7 @@
 
 class Renderer {
 public:
-    Renderer(Window* window);
+    Renderer(SDL_Window* window);
     ~Renderer();
     void clear();
     void present();
@@ -18,5 +16,5 @@ public:
 
 private:
     SDL_Renderer* sdlRenderer_;
-    Window* window_;
+    SDL_Window* window_;
 };

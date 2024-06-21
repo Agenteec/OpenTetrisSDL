@@ -1,6 +1,6 @@
 #include "Scenes/SinglePlayerGameScene.h"
-
-SinglePlayerGameScene::SinglePlayerGameScene(Window* window, Renderer* renderer, InputHandler* inputHandler, PhysicsEngine* physicsEngine)
+#include "Game.h"
+SinglePlayerGameScene::SinglePlayerGameScene(Window* window, Renderer* renderer, InputHandler* inputHandler, PhysicsEngine* physicsEngine, Game* game_)
     : window_(window), renderer_(renderer), inputHandler_(inputHandler), physicsEngine_(physicsEngine) {}
 
 void SinglePlayerGameScene::init() {

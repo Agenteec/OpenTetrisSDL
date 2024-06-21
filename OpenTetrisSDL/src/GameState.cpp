@@ -1,23 +1,31 @@
 #include "GameState.h"
 
-GameState::GameState() {}
+GameState::GameState() : nextId_(0) {}
 
 GameState::~GameState() {}
 
 void GameState::addObject(std::shared_ptr<GameObject> object) {
-    objects_.push_back(object);
+    objects_[nextId_++] = object;
 }
 
-void GameState::removeObject(std::shared_ptr<GameObject> object) {
-    objects_.erase(std::remove(objects_.begin(), objects_.end(), object), objects_.end());
+void GameState::removeObject(int id) {
+    objects_.erase(id);
 }
 
-std::vector<std::shared_ptr<GameObject>> GameState::getObjects() const {
+std::shared_ptr<GameObject> GameState::getObject(int id) {
+    auto it = objects_.find(id);
+    if (it != objects_.end()) {
+        return it->second;
+    }
+    return nullptr;
+}
+
+const std::unordered_map<int, std::shared_ptr<GameObject>>& GameState::getObjects() const {
     return objects_;
 }
 
 void GameState::update() {
-    for (const auto& object : objects_) {
-        object->update();
+    for (auto& pair : objects_) {
+        pair.second->update();
     }
 }

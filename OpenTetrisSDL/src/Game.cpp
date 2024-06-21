@@ -1,53 +1,33 @@
 #include "Game.h"
 
-#include "Game.h"
-
 Game::Game()
-    : window(std::make_unique<Window>("Test", 800, 600)),
-    renderer(std::make_unique<Renderer>(window.get())),
+    : window(std::make_unique<Window>("Game Window", 800, 600)),
+    renderer(std::make_unique<Renderer>(window->getSDLWindow())),
     inputHandler(std::make_unique<InputHandler>()),
     networkManager(std::make_unique<NetworkManager>()),
     physicsEngine(std::make_unique<PhysicsEngine>()),
     resourceManager(std::make_unique<ResourceManager>()),
     gameState(std::make_unique<GameState>()),
     running(true) {
-    init();
+    currentScene = std::make_unique<MainMenuScene>(window.get(), renderer.get(), inputHandler.get(), this);
 }
 
-Game::~Game() {
-    if (server) {
-        server->stop();
-    }
-}
+Game::~Game() {}
 
 void Game::init() {
     changeScene(std::make_unique<MainMenuScene>(window.get(), renderer.get(), inputHandler.get(), this));
 }
 
 void Game::update() {
-    if (currentScene) {
-        currentScene->update();
-    }
-    gameState->update();
+    currentScene->update();
 }
 
 void Game::render() {
-    if (currentScene) {
-        currentScene->render();
-    }
+    currentScene->render();
 }
 
 void Game::handleEvents() {
-    if (currentScene) {
-        currentScene->handleEvents();
-    }
-}
-
-void Game::changeScene(std::unique_ptr<Scene> newScene) {
-    currentScene = std::move(newScene);
-    if (currentScene) {
-        currentScene->init();
-    }
+    currentScene->handleEvents();
 }
 
 void Game::run() {
@@ -56,6 +36,11 @@ void Game::run() {
         update();
         render();
     }
+}
+
+void Game::changeScene(std::unique_ptr<Scene> newScene) {
+    currentScene = std::move(newScene);
+    currentScene->init();
 }
 
 void Game::quit() {
