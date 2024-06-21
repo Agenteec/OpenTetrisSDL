@@ -45,5 +45,6 @@ private:
     std::unique_ptr<GameState> gameState;
     std::vector<std::unique_ptr<Scene>> scenes;
     std::unique_ptr<Scene> currentScene;
+    std::unique_ptr<Server> server;
     bool running;
 };
