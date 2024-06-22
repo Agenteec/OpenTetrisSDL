@@ -13,11 +13,11 @@ public:
     NetworkManager();
     ~NetworkManager();
     void start(const std::string& host, const std::string& tcpPort, const std::string& udpPort);
-    void stop();
     void sendTCP(const std::string& message);
     void sendUDP(const std::string& message);
     void receiveTCP();
     void receiveUDP();
+    void stop();
 
 private:
     void handleTCPRead(const boost::system::error_code& error, std::size_t bytes_transferred);
@@ -30,5 +30,7 @@ private:
     std::thread network_thread_;
     std::atomic<bool> running_;
     std::string tcp_buffer_;
-    std::array<char, 1024> udp_buffer_;
+    std::string udp_buffer_;
+    std::atomic<bool> tcp_receiving_;
+    std::atomic<bool> udp_receiving_;
 };

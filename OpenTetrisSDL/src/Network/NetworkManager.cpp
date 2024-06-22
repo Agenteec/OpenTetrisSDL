@@ -1,7 +1,7 @@
 #include "Network/NetworkManager.h"
 
 NetworkManager::NetworkManager()
-    : tcp_socket_(io_context_), udp_socket_(io_context_), running_(false) {}
+    : tcp_socket_(io_context_), udp_socket_(io_context_), running_(false), tcp_receiving_(false), udp_receiving_(false) {}
 
 NetworkManager::~NetworkManager() {
     stop();
@@ -36,15 +36,8 @@ void NetworkManager::start(const std::string& host, const std::string& tcpPort, 
 
 void NetworkManager::sendTCP(const std::string& message) {
     try {
-        auto msg_copy = std::make_shared<std::string>(message);
-        boost::asio::async_write(tcp_socket_, boost::asio::buffer(message), [this, msg_copy](boost::system::error_code ec, std::size_t) {
-            if (ec) {
-                spdlog::error("TCP send error: {}", ec.message());
-            }
-            else {
-                spdlog::info("Sent TCP message: {}", *msg_copy);
-            }
-            });
+        boost::asio::write(tcp_socket_, boost::asio::buffer(message));
+        spdlog::info("Sent TCP message: {}", message);
     }
     catch (const boost::system::system_error& e) {
         spdlog::error("TCP send error: {}", e.what());
@@ -53,13 +46,12 @@ void NetworkManager::sendTCP(const std::string& message) {
 
 void NetworkManager::sendUDP(const std::string& message) {
     try {
-        auto msg_copy = std::make_shared<std::string>(message);
-        udp_socket_.async_send_to(boost::asio::buffer(*msg_copy), udp_endpoint_, [this, msg_copy](boost::system::error_code ec, std::size_t) {
+        udp_socket_.async_send_to(boost::asio::buffer(message), udp_endpoint_, [this, message](boost::system::error_code ec, std::size_t) {
             if (ec) {
                 spdlog::error("UDP send error: {}", ec.message());
             }
             else {
-                spdlog::info("Sent UDP message: {}", *msg_copy);
+                spdlog::info("Sent UDP message: {}", message);
             }
             });
     }
@@ -69,16 +61,28 @@ void NetworkManager::sendUDP(const std::string& message) {
 }
 
 void NetworkManager::receiveTCP() {
+    if (tcp_receiving_.load()) return;
+    tcp_receiving_.store(true);
     boost::asio::async_read_until(tcp_socket_, boost::asio::dynamic_buffer(tcp_buffer_), "\n",
         [this](const boost::system::error_code& error, std::size_t bytes_transferred) {
             handleTCPRead(error, bytes_transferred);
+            tcp_receiving_.store(false);
+            if (!error) {
+                receiveTCP();
+            }
         });
 }
 
 void NetworkManager::receiveUDP() {
+    if (udp_receiving_.load()) return;
+    udp_receiving_.store(true);
     udp_socket_.async_receive_from(boost::asio::buffer(udp_buffer_), udp_endpoint_,
         [this](const boost::system::error_code& error, std::size_t bytes_transferred) {
             handleUDPRead(error, bytes_transferred);
+            udp_receiving_.store(false);
+            if (!error) {
+                receiveUDP();
+            }
         });
 }
 
@@ -87,7 +91,6 @@ void NetworkManager::handleTCPRead(const boost::system::error_code& error, std::
         std::string message(tcp_buffer_.substr(0, bytes_transferred));
         tcp_buffer_.erase(0, bytes_transferred);
         spdlog::info("Received TCP message: {}", message);
-        receiveTCP();
     }
     else {
         spdlog::error("TCP read error: {}", error.message());
@@ -100,9 +103,8 @@ void NetworkManager::handleTCPRead(const boost::system::error_code& error, std::
 
 void NetworkManager::handleUDPRead(const boost::system::error_code& error, std::size_t bytes_transferred) {
     if (!error) {
-        std::string message(udp_buffer_.data(), bytes_transferred);
+        std::string message(udp_buffer_.substr(0, bytes_transferred));
         spdlog::info("Received UDP message: {}", message);
-        receiveUDP();
     }
     else {
         spdlog::error("UDP read error: {}", error.message());
