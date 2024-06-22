@@ -69,3 +69,5 @@ set(SOURCE_DIR ${CMAKE_SOURCE_DIR}/Resources)
 set(DESTINATION_DIR ${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME})
 file(COPY ${SOURCE_DIR} DESTINATION ${DESTINATION_DIR})
 #Resources copy
+
+target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE Log_To_File=false)
