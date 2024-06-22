@@ -1,6 +1,7 @@
 #pragma once
 
 #include <boost/asio.hpp>
+#include <spdlog/spdlog.h>
 #include <thread>
 #include <functional>
 #include "GameState.h"

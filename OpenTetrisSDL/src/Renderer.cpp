@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 
+
 Renderer::Renderer(SDL_Window* window, const VideoSettings& videoSettings)
     : window_(window), frameRateLimit_(videoSettings.framerateLimit), verticalSyncEnabled_(videoSettings.verticalSyncEnabled) {
     Uint32 flags = SDL_RENDERER_ACCELERATED;
@@ -18,10 +19,16 @@ Renderer::Renderer(SDL_Window* window, const VideoSettings& videoSettings)
 
     setFrameRateLimit(videoSettings.framerateLimit);
     setAntiAliasingLevel(videoSettings.antiAliasingLevel);
+    initImGui();
 }
+void Renderer::renderImGui() {
+        ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), sdlRenderer_);
 
+    
+}
 Renderer::~Renderer() {
     SDL_DestroyRenderer(sdlRenderer_);
+    cleanupImGui();
     spdlog::info("Renderer destroyed");
 }
 
@@ -31,6 +38,8 @@ void Renderer::clear() {
 }
 
 void Renderer::present() {
+
+
     SDL_RenderPresent(sdlRenderer_);
     spdlog::debug("Renderer presented");
 }
@@ -75,4 +84,24 @@ void Renderer::setFrameRateLimit(int limit) {
 void Renderer::setAntiAliasingLevel(int level) {
     //Пока не знаю как выставить
     spdlog::info("Anti-aliasing level set to {}", level);
+}
+
+void Renderer::initImGui()
+{
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.Fonts->Clear();
+    io.Fonts->AddFontFromFileTTF("C:/Windows/Fonts/arial.ttf", 18, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+
+    ImGui_ImplSDL2_InitForSDLRenderer(window_, sdlRenderer_);
+    ImGui_ImplSDLRenderer2_Init(sdlRenderer_);
+}
+
+void Renderer::cleanupImGui()
+{
+    ImGui_ImplSDLRenderer2_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+    spdlog::debug("Cleanup ImGui");
 }

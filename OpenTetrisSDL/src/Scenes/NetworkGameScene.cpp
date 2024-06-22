@@ -1,8 +1,8 @@
 #include "Scenes/NetworkGameScene.h"
 #include "Game.h"
 
-NetworkGameScene::NetworkGameScene(Window* window, Renderer* renderer, InputHandler* inputHandler, NetworkManager* networkManager, PhysicsEngine* physicsEngine)
-    : window_(window), renderer_(renderer), inputHandler_(inputHandler), networkManager_(networkManager), physicsEngine_(physicsEngine) {}
+NetworkGameScene::NetworkGameScene(Window* window, Renderer* renderer, InputHandler* inputHandler, NetworkManager* networkManager, PhysicsEngine* physicsEngine, Game* game)
+    : window_(window), renderer_(renderer), inputHandler_(inputHandler), networkManager_(networkManager), physicsEngine_(physicsEngine), game_(game) {}
 
 void NetworkGameScene::init() {
 }
@@ -14,6 +14,23 @@ void NetworkGameScene::update() {
 
 void NetworkGameScene::render() {
     renderer_->clear();
+    ImGui_ImplSDLRenderer2_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+
+
+    ImGui::Begin("Network game Menu");
+    if (ImGui::Button("Start Game")) {
+
+    }
+    if (ImGui::Button("Exit")) {
+
+    }
+    ImGui::End();
+    ImGui::Render();
+
+    renderer_->renderImGui();
+
     renderer_->present();
 }
 

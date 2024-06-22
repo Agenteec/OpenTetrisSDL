@@ -1,7 +1,9 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <imgui_impl_sdl2.h>
 #include <unordered_map>
+#include <spdlog/spdlog.h>
 
 class InputHandler {
 public:

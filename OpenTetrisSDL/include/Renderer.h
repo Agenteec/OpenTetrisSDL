@@ -1,5 +1,11 @@
 #pragma once
 
+
+#include <imgui.h>
+#include <imgui_stdlib.h>
+#include <imgui_impl_sdl2.h>
+#include <imgui_impl_sdlrenderer2.h>
+#include <imgui_impl_opengl3.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <string>
@@ -17,7 +23,9 @@ public:
     void setVerticalSync(bool enabled);
     void setFrameRateLimit(int limit);
     void setAntiAliasingLevel(int level);
-
+    void initImGui();
+    void cleanupImGui();
+    void renderImGui();
 private:
     SDL_Renderer* sdlRenderer_;
     SDL_Window* window_;

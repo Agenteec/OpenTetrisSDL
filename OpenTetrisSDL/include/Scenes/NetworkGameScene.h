@@ -10,7 +10,7 @@
 class Game;
 class NetworkGameScene : public Scene {
 public:
-    NetworkGameScene(Window* window, Renderer* renderer, InputHandler* inputHandler, NetworkManager* networkManager, PhysicsEngine* physicsEngine);
+    NetworkGameScene(Window* window, Renderer* renderer, InputHandler* inputHandler, NetworkManager* networkManager, PhysicsEngine* physicsEngine, Game* game);
     void init() override;
     void update() override;
     void render() override;

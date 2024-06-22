@@ -55,6 +55,14 @@ void Game::run() {
         handleEvents();
         update();
         render();
+        SDL_Delay(16);
+    }
+    if (server != nullptr)
+    {
+        if (server->isRunning())
+        {
+            server->stop();
+        }
     }
 }
 
@@ -70,6 +78,15 @@ void Game::quit() {
 void Game::startServer(short tcpPort, short udpPort) {
     server = std::make_unique<Server>(tcpPort, udpPort);
     server->start();
+}
+
+bool Game::isServerRunning()
+{
+    if (server != nullptr)
+    {
+        return server->isRunning();
+    }
+    return false;
 }
 
 void Game::connectToServer(const std::string& host, const std::string& tcpPort, const std::string& udpPort) {

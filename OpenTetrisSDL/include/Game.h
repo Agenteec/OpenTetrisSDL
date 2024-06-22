@@ -28,6 +28,7 @@ public:
     void changeScene(std::unique_ptr<Scene> newScene);
     void quit();
     void startServer(short tcpPort, short udpPort);
+    bool isServerRunning();
     void connectToServer(const std::string& host, const std::string& tcpPort, const std::string& udpPort);
     NetworkManager* getNetworkManager();
     PhysicsEngine* getPhysicsEngine();
