@@ -1,6 +1,7 @@
 #pragma once
 #include "Window.h"
 #include "Renderer.h"
+#include "Settings.h"
 #include "InputHandler.h"
 
 #include "Network/NetworkManager.h"
@@ -20,6 +21,7 @@
 
 class Game {
 public:
+    Game(std::shared_ptr<Settings> settings);
     Game();
     ~Game();
     void run();
@@ -45,7 +47,10 @@ private:
     std::unique_ptr<ResourceManager> resourceManager;
     std::unique_ptr<GameState> gameState;
     std::vector<std::unique_ptr<Scene>> scenes;
+    std::shared_ptr<Settings> settings;
     std::unique_ptr<Scene> currentScene;
     std::unique_ptr<Server> server;
     bool running;
+
+
 };

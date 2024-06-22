@@ -1,8 +1,22 @@
 #include "Game.h"
 
 Game::Game()
-    : window(std::make_unique<Window>("Game Window", 800, 600)),
-    renderer(std::make_unique<Renderer>(window->getSDLWindow())),
+    : settings(std::make_shared<Settings>()),
+    window(std::make_unique<Window>("Game Window", 800, 600, false)),
+    renderer(std::make_unique<Renderer>(window->getSDLWindow(), settings->videoSettings)),
+    inputHandler(std::make_unique<InputHandler>()),
+    networkManager(std::make_unique<NetworkManager>()),
+    physicsEngine(std::make_unique<PhysicsEngine>()),
+    resourceManager(std::make_unique<ResourceManager>()),
+    gameState(std::make_unique<GameState>()),
+    running(true) {
+    currentScene = std::make_unique<MainMenuScene>(window.get(), renderer.get(), inputHandler.get(), this);
+}
+
+Game::Game(std::shared_ptr<Settings> settings)
+    : settings(settings),
+    window(std::make_unique<Window>("Game Window", settings->videoSettings.width, settings->videoSettings.height, settings->videoSettings.fullscreen)),
+    renderer(std::make_unique<Renderer>(window->getSDLWindow(), settings->videoSettings)),
     inputHandler(std::make_unique<InputHandler>()),
     networkManager(std::make_unique<NetworkManager>()),
     physicsEngine(std::make_unique<PhysicsEngine>()),
@@ -15,6 +29,12 @@ Game::Game()
 Game::~Game() {}
 
 void Game::init() {
+    window->setFullscreen(settings->videoSettings.fullscreen);
+    renderer->setVerticalSync(settings->videoSettings.verticalSyncEnabled);
+    renderer->setFrameRateLimit(settings->videoSettings.framerateLimit);
+    renderer->setAntiAliasingLevel(settings->videoSettings.antiAliasingLevel);
+    window->resize(settings->videoSettings.width, settings->videoSettings.height);
+
     changeScene(std::make_unique<MainMenuScene>(window.get(), renderer.get(), inputHandler.get(), this));
 }
 
