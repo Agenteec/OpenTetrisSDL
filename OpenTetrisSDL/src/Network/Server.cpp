@@ -15,16 +15,14 @@ void Server::start() {
         try {
             spdlog::info("Starting server on TCP port {} and UDP port {}", tcpPort_, udpPort_);
 
-            {
-                std::lock_guard<std::mutex> lock(server_mutex_);
-                running_ = true;
-            }
+            running_ = true;
 
             acceptor_.async_accept([this](const boost::system::error_code& error, boost::asio::ip::tcp::socket socket) {
                 handleAccept(error, std::move(socket));
                 });
 
-            for (size_t i = 0; i < std::thread::hardware_concurrency(); ++i) {
+            size_t thread_count = std::max(2u, std::thread::hardware_concurrency());
+            for (size_t i = 0; i < thread_count; ++i) {
                 worker_threads_.emplace_back([this]() { io_context_.run(); });
             }
 
@@ -43,10 +41,7 @@ void Server::start() {
 }
 
 void Server::stop() {
-    {
-        std::lock_guard<std::mutex> lock(server_mutex_);
-        running_ = false;
-    }
+    running_ = false;
     io_context_.stop();
     for (auto& thread : worker_threads_) {
         if (thread.joinable()) {
@@ -59,9 +54,8 @@ void Server::stop() {
     networkManager_.stop();
 }
 
-bool Server::isRunning() {
-    std::lock_guard<std::mutex> lock(server_mutex_);
-    return running_;
+bool Server::isRunning() const {
+    return running_.load();
 }
 
 void Server::handleAccept(const boost::system::error_code& error, boost::asio::ip::tcp::socket socket) {

@@ -8,8 +8,10 @@ void NetworkGameScene::init() {
 }
 
 void NetworkGameScene::update() {
+
     networkManager_->receiveTCP();
     networkManager_->receiveUDP();
+
 }
 
 void NetworkGameScene::render() {
@@ -24,7 +26,8 @@ void NetworkGameScene::render() {
 
     }
     if (ImGui::Button("Exit")) {
-
+        game_->changeScene(std::make_unique<MainMenuScene>(window_, renderer_, inputHandler_, game_));
+    
     }
     ImGui::End();
     ImGui::Render();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Network/NetworkManager.h"
+#include <GameState.h>
 
 class Client {
 public:

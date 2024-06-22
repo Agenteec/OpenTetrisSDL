@@ -36,8 +36,15 @@ void NetworkManager::start(const std::string& host, const std::string& tcpPort, 
 
 void NetworkManager::sendTCP(const std::string& message) {
     try {
-        boost::asio::write(tcp_socket_, boost::asio::buffer(message));
-        spdlog::info("Sent TCP message: {}", message);
+        auto msg_copy = std::make_shared<std::string>(message);
+        boost::asio::async_write(tcp_socket_, boost::asio::buffer(message), [this, msg_copy](boost::system::error_code ec, std::size_t) {
+            if (ec) {
+                spdlog::error("TCP send error: {}", ec.message());
+            }
+            else {
+                spdlog::info("Sent TCP message: {}", *msg_copy);
+            }
+            });
     }
     catch (const boost::system::system_error& e) {
         spdlog::error("TCP send error: {}", e.what());
@@ -46,8 +53,15 @@ void NetworkManager::sendTCP(const std::string& message) {
 
 void NetworkManager::sendUDP(const std::string& message) {
     try {
-        udp_socket_.send_to(boost::asio::buffer(message), udp_endpoint_);
-        spdlog::info("Sent UDP message: {}", message);
+        auto msg_copy = std::make_shared<std::string>(message);
+        udp_socket_.async_send_to(boost::asio::buffer(*msg_copy), udp_endpoint_, [this, msg_copy](boost::system::error_code ec, std::size_t) {
+            if (ec) {
+                spdlog::error("UDP send error: {}", ec.message());
+            }
+            else {
+                spdlog::info("Sent UDP message: {}", *msg_copy);
+            }
+            });
     }
     catch (const boost::system::system_error& e) {
         spdlog::error("UDP send error: {}", e.what());
@@ -80,23 +94,19 @@ void NetworkManager::handleTCPRead(const boost::system::error_code& error, std::
         if (error == boost::asio::error::eof) {
             spdlog::warn("TCP connection closed by peer");
         }
-        // «акрываем сокет и освобождаем ресурсы, если это необходимо
         tcp_socket_.close();
-        // ћожно добавить логику дл€ попытки восстановлени€ соединени€, если это необходимо
     }
 }
 
 void NetworkManager::handleUDPRead(const boost::system::error_code& error, std::size_t bytes_transferred) {
     if (!error) {
-        std::string message(udp_buffer_.substr(0, bytes_transferred));
+        std::string message(udp_buffer_.data(), bytes_transferred);
         spdlog::info("Received UDP message: {}", message);
         receiveUDP();
     }
     else {
         spdlog::error("UDP read error: {}", error.message());
-        // «акрываем сокет и освобождаем ресурсы, если это необходимо
         udp_socket_.close();
-        // ћожно добавить логику дл€ попытки восстановлени€ соединени€, если это необходимо
     }
 }
 
